@@ -246,29 +246,33 @@ def _new_set_url_path(self, parent):
     This way we can get different urls for each language, defined
     by page slug.
     """
+    default_localized_slug_field = build_localized_fieldname(
+        'slug', mt_settings.DEFAULT_LANGUAGE)
+    default_localized_url_path_field = build_localized_fieldname(
+        'url_path', mt_settings.DEFAULT_LANGUAGE)
+
     for language in mt_settings.AVAILABLE_LANGUAGES:
         localized_slug_field = build_localized_fieldname('slug', language)
-        default_localized_slug_field = build_localized_fieldname(
-            'slug', mt_settings.DEFAULT_LANGUAGE)
         localized_url_path_field = build_localized_fieldname(
             'url_path', language)
-        default_localized_url_path_field = build_localized_fieldname(
-            'url_path', mt_settings.DEFAULT_LANGUAGE)
 
         if parent:
             parent = parent.specific
 
-            # Emulate the default behavior of django-modeltranslation to get the slug and url path
-            # for the current language. If the value for the current language is invalid we get the one
-            # for the default fallback language
+            # Emulate the default behavior of django-modeltranslation to get
+            # the slug and url path for the current language. If the value for
+            # the current language is invalid we get the one for the default
+            # fallback language
             slug = getattr(self, localized_slug_field, None) or getattr(
-                self, default_localized_slug_field, self.slug)
-            parent_url_path = getattr(parent, localized_url_path_field, None) or \
-                getattr(parent, default_localized_url_path_field, parent.url_path)
+                self, default_localized_slug_field) or self.slug
+            parent_url_path = getattr(parent, localized_url_path_field, None) \
+                or getattr(parent, default_localized_url_path_field) or \
+                parent.url_path
 
             localized_url_path_value = slug + '/'
             if parent_url_path:
-                localized_url_path_value = parent_url_path + localized_url_path_value
+                localized_url_path_value = parent_url_path + \
+                    localized_url_path_value
 
             setattr(self, localized_url_path_field, localized_url_path_value)
 
