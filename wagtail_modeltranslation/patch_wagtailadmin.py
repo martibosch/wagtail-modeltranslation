@@ -160,9 +160,9 @@ class WagtailTranslator(object):
 
             # if the original field is required and the current language is the default one
             # this field's blank property is set to False
-            if not original_field.blank and language == mt_settings.DEFAULT_LANGUAGE:
-                localized_field = model._meta.get_field(localized_field_name)
-                localized_field.blank = False
+            # if not original_field.blank and language == mt_settings.DEFAULT_LANGUAGE:
+            #     localized_field = model._meta.get_field(localized_field_name)
+            #     localized_field.blank = False
 
             localized_panel = panel_class(localized_field_name)
 
